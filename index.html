@@ -1,0 +1,2672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SGI Student Connect Portal - Issue Management System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="icon" href="data:image/svg+xml,<svgxmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            line-height: 1.6;
+            color: #1f2937;
+            background-color: #f9fafb;
+        }
+
+.gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #5b73e8 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+.gradient-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+.card-shadow {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+.card-shadow:hover {
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+
+.status-open { 
+            background: linear-gradient(135deg, #fef3c7, #fde68a); 
+            color: #92400e; 
+            border: 1px solid #f59e0b;
+        }
+.status-in-progress { 
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe); 
+            color: #1e40af; 
+            border: 1px solid #3b82f6;
+        }
+.status-escalated { 
+            background: linear-gradient(135deg, #fee2e2, #fecaca); 
+            color: #dc2626; 
+            border: 1px solid #ef4444;
+            animation: pulse-warning 2s infinite;
+        }
+.status-resolved { 
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0); 
+            color: #065f46; 
+            border: 1px solid #10b981;
+        }
+
+        @keyframes pulse-warning {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+.priority-high { 
+            border-left: 6px solid #dc2626; 
+            background: linear-gradient(90deg, rgba(220, 38, 38, 0.05), transparent);
+        }
+.priority-medium { 
+            border-left: 6px solid #f59e0b; 
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.05), transparent);
+        }
+.priority-low { 
+            border-left: 6px solid #10b981; 
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.05), transparent);
+        }
+
+.timer-warning { 
+            animation: pulse-urgent 1.5s infinite;
+            font-weight: 700;
+        }
+
+        @keyframes pulse-urgent {
+            0%, 100% { opacity: 1; color: #dc2626; }
+            50% { opacity: 0.6; color: #ef4444; }
+        }
+
+.role-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+.role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+.role-card:hover::before {
+            left: 100%;
+        }
+
+.role-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+.fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+.slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+.bounce-in {
+            animation: bounceIn 0.6s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+.glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+.btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+.btn-primary:hover {
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+.btn-secondary {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            color: #374151;
+            transition: all 0.3s ease;
+        }
+
+.btn-secondary:hover {
+            background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+            transform: translateY(-1px);
+        }
+
+.notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+.notification.show {
+            transform: translateX(0);
+        }
+
+.notification.success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+.notification.error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+.notification.info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+.loading-spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+.progress-bar {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+.progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+.tooltip {
+            position: relative;
+        }
+
+.tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+        }
+
+.issue-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+.issue-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+.stats-card {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+.stats-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+.role-card:hover {
+                transform: translateY(-4px) scale(1.01);
+            }
+
+.notification {
+                right: 10px;
+                left: 10px;
+                transform: translateY(-100px);
+            }
+
+.notification.show {
+                transform: translateY(0);
+            }
+        }
+
+.dark-mode {
+            background-color: #111827;
+            color: #f9fafb;
+        }
+
+.dark-mode .card-shadow {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+        }
+
+.dark-mode .glass-effect {
+            background: rgba(31, 41, 55, 0.95);
+            border: 1px solid rgba(75, 85, 99, 0.2);
+        }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<!-- Notification System -->
+<div id="notification" class="notification"></div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+<div class="glass-effect rounded-xl p-8 text-center">
+<div class="loading-spinner mx-auto mb-4"></div>
+<p class="text-gray-700 font-medium">Loading...</p>
+</div>
+</div>
+
+<!-- Home Page - Role Selection -->
+<div id="homePage" class="min-h-screen gradient-bg flex items-center justify-center relative">
+<div class="container mx-auto px-6 py-8 relative z-10">
+<!-- Header -->
+<div class="text-center mb-16 fade-in">
+<div class="flex items-center justify-center mb-8">
+<div class="w-24 h-24 glass-effect rounded-full flex items-center justify-center shadow-2xl mr-6 bounce-in">
+<svgviewBox="0 0 100 100" class="w-14 h-14">
+<defs>
+<linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+<stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+</linearGradient>
+</defs>
+<path d="M10 70 L25 40 L40 55 L55 30 L70 45 L85 25 L90 70 Z" fill="url(#logoGradient)" opacity="0.9"/>
+<path d="M15 70 L30 45 L45 60 L60 35 L75 50 L90 30 L95 70 Z" fill="url(#logoGradient)" opacity="0.7"/>
+<rect x="35" y="55" width="30" height="15" fill="#1e40af" rx="3"/>
+<rect x="45" y="50" width="10" height="5" fill="#dc2626" rx="2"/>
+<circle cx="40" cy="60" r="1.5" fill="white"/>
+<circle cx="45" cy="60" r="1.5" fill="white"/>
+<circle cx="55" cy="60" r="1.5" fill="white"/>
+<circle cx="60" cy="60" r="1.5" fill="white"/>
+<rect x="47" y="62" width="6" height="8" fill="#7c3aed" rx="2"/>
+<text x="50" y="88" text-anchor="middle" fill="#4f46e5" font-size="10" font-weight="bold">SGI</text>
+</svg>
+</div>
+<div class="text-white slide-in">
+<h1 class="text-5xl font-bold mb-3 bg-gradient-to-r from-white to-purple-100 bg-clip-text text-transparent">
+                            Sukhjinder group of institutes
+</h1>
+<p class="text-purple-100 text-xl font-medium">Sukhjinder group of institutes - Issue Management System</p>
+<div class="mt-4 flex items-center justify-center space-x-6 text-sm text-purple-200">
+<span class="flex items-center">
+<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+</svg>
+                                Secure & Reliable
+</span>
+<span class="flex items-center">
+<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+</svg>
+                                24/7 Support
+</span>
+<span class="flex items-center">
+<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clip-rule="evenodd"></path>
+</svg>
+                                Real-time Tracking
+</span>
+</div>
+</div>
+</div>
+<div class="max-w-2xl mx-auto">
+<p class="text-white/90 text-2xl font-light mb-4">Welcome to your comprehensive issue management solution</p>
+<p class="text-purple-100 text-lg">Please select your role to access your personalized dashboard</p>
+</div>
+</div>
+
+<!-- Role Selection Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+<div class="role-card glass-effect rounded-2xl p-8 text-center group" onclick="selectRole('student')">
+<div class="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">👨🎓</div>
+<h3 class="text-2xl font-bold text-gray-800 mb-3">Student Portal</h3>
+<p class="text-gray-600 text-base mb-6 font-medium">Report and track your issues efficiently</p>
+<div class="text-sm text-gray-500 space-y-2 text-left">
+<div class="flex items-center">
+<svg class="w-4 h-4 mr-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+</svg>
+                            Submit new issues instantly
+</div>
+<div class="flex items-center">
+<svg class="w-4 h-4 mr-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+</svg>
+                            Real-time status tracking
+</div>
+<div class="flex items-center">
+<svg class="w-4 h-4 mr-3 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+</svg>
+                            Get resolution updates
+</div>
+</div>
+<div class="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<div class="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
+</div>
+</div>
+</div>
+
+<div class="role-card glass-effect rounded-2xl p-8 text-center group" onclick="selectRole('hod')">
+<div class="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">👨🏫</div>
+<h3 class="text-2xl font-bold text-gray-800 mb-3">HOD Portal</h3>
+<p class="text-gray-600 text-base mb-6 font-medium">Manage department issues & analytics</p>
+<div class="text-sm text-gray-500 space-y-2 text-left">
+<div class="flex items-center">
+<svg class="w-4 h-4 mr-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+</svg>
+                            Review assigned issues
+</div>
+<div class="flex items-center">
+<svg class="w-4 h-4 mr-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+</svg>
+                            Department analytics
+</div>
+<div class="flex items-center">
+<svg class="w-4 h-4 mr-3 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+</svg>
+                            Student feedback management
+</div>
+</div>
+<div class="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<div class="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
+</div>
+</div>
+</div>
+
+<div class="role-card glass-effect rounded-2xl p-8 text-center group" onclick="selectRole('principal')">
+<div class="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">👩💼</div>
+<h3 class="text-2xl font-bold text-gray-800 mb-3">Principal Portal</h3>
+<p class="text-gray-600 text-base mb-6 font-medium">College-wide oversight & management</p>
+<div class="text-sm text-gray-500 space-y-2 text-left">
+<div class="flex items-center">
+<svg class="w-4 h-4 mr-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+</svg>
+                           College performance metrics
+</div>
+<div class="flex items-center">
+<svg class="w-4 h-4 mr-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+</svg>
+                            Critical issue management
+</div>
+<div class="flex items-center">
+<svg class="w-4 h-4 mr-3 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+</svg>
+                            Department comparisons
+</div>
+</div>
+<div class="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<div class="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
+</div>
+</div>
+</div>
+
+<div class="role-card glass-effect rounded-2xl p-8 text-center group" onclick="selectRole('admin')">
+<div class="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">⚙️</div>
+<h3 class="text-2xl font-bold text-gray-800 mb-3">Admin Portal</h3>
+<p class="text-gray-600 text-base mb-6 font-medium">Complete system management</p>
+<div class="text-sm text-gray-500 space-y-2 text-left">
+<div class="flex items-center">
+<svg class="w-4 h-4 mr-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+</svg>
+                            User account management
+</div>
+<div class="flex items-center">
+<svg class="w-4 h-4 mr-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+</svg>
+                            System configuration
+</div>
+<div class="flex items-center">
+<svg class="w-4 h-4 mr-3 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+</svg>
+                            Advanced analytics & reports
+</div>
+</div>
+<div class="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<div class="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-gray-500 to-gray-700 rounded-full transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Footer Info -->
+<div class="text-center mt-16 text-white/70">
+<p class="text-sm">© SGI. All rights reserved.</p>
+<p class="text-xs mt-2">Secure • Reliable • Always Available</p>
+</div>
+</div>
+</div>
+
+<!-- Login Page -->
+<div id="loginPage" class="min-h-screen gradient-bg flex items-center justify-center relative" style="display: none;">
+<div class="container mx-auto px-6 py-8 relative z-10">
+<div class="max-w-lg mx-auto">
+<button onclick="goBackToHome()" class="mb-8 flex items-center text-white hover:text-purple-200 transition duration-300 group">
+<svg class="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+</svg>
+<span class="font-medium">Back to Role Selection</span>
+</button>
+
+<div class="glass-effect rounded-2xl p-10 card-shadow fade-in">
+<div class="text-center mb-8">
+<div class="w-20 h-20 mx-auto mb-6 glass-effect rounded-full flex items-center justify-center bounce-in">
+<div class="text-4xl" id="loginRoleIcon">👨🎓</div>
+</div>
+<h2 class="text-3xl font-bold text-gray-800 mb-2" id="loginRoleTitle">Student Login</h2>
+<p class="text-gray-600 text-lg" id="loginRoleDescription">Enter your credentials to access the student portal</p>
+<div class="mt-4 h-1 w-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full mx-auto"></div>
+</div>
+
+<form id="loginForm" class="space-y-6">
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-gray-700">Email/Username</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+</svg>
+</div>
+<input type="text" id="loginUsername" class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 text-lg" placeholder="Enter your email or username" required>
+</div>
+</div>
+
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-gray-700">Password</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+</svg>
+</div>
+<input type="password" id="loginPassword" class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 text-lg" placeholder="Enter your password" required>
+</div>
+</div>
+
+<div class="pt-4">
+<button type="submit" class="w-full btn-primary text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition duration-300 flex items-center justify-center space-x-2">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+</svg>
+<span>Access Portal</span>
+</button>
+</div>
+</form>
+
+
+
+<div class="mt-8 pt-6 border-t border-gray-200">
+<div class="text-center">
+<p class="text-sm text-gray-500 mb-3">Need help accessing your account?</p>
+<div class="flex justify-center space-x-4 text-xs">
+<button onclick="contactSupport()" class="text-purple-600 hover:text-purple-800 font-medium transition duration-200">Contact Support</button>
+<span class="text-gray-300">|</span>
+<button onclick="forgotPassword()" class="text-purple-600 hover:text-purple-800 font-medium transition duration-200">Forgot Password?</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Security Notice -->
+<div class="mt-6 text-center">
+<div class="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm">
+<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+</svg>
+                        Your connection is secure and encrypted
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Main Portal Header -->
+<header id="portalHeader" class="gradient-bg text-white shadow-2xl relative overflow-hidden" style="display: none;">
+<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+<div class="container mx-auto px-6 py-6 relative z-10">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-4">
+<div class="w-14 h-14 glass-effect rounded-full flex items-center justify-center shadow-xl">
+<svgviewBox="0 0 100 100" class="w-9 h-9">
+<defs>
+<linearGradient id="headerLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+<stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+</linearGradient>
+</defs>
+<path d="M10 70 L25 40 L40 55 L55 30 L70 45 L85 25 L90 70 Z" fill="url(#headerLogoGradient)" opacity="0.9"/>
+<path d="M15 70 L30 45 L45 60 L60 35 L75 50 L90 30 L95 70 Z" fill="url(#headerLogoGradient)" opacity="0.7"/>
+<rect x="35" y="55" width="30" height="15" fill="#1e40af" rx="3"/>
+<rect x="45" y="50" width="10" height="5" fill="#dc2626" rx="2"/>
+<circle cx="40" cy="60" r="1.5" fill="white"/>
+<circle cx="45" cy="60" r="1.5" fill="white"/>
+<circle cx="55" cy="60" r="1.5" fill="white"/>
+<circle cx="60" cy="60" r="1.5" fill="white"/>
+<rect x="47" y="62" width="6" height="8" fill="#7c3aed" rx="2"/>
+<text x="50" y="88" text-anchor="middle" fill="#4f46e5" font-size="9" font-weight="bold">AWS</text>
+</svg>
+</div>
+<div>
+<h1 class="text-2xl font-bold bg-gradient-to-r from-white to-purple-100 bg-clip-text text-transparent">
+                            Sukhjinder group of institutes
+</h1>
+<p class="text-purple-100 text-sm font-medium">Sukhjinder group of institutes - Issue Management System</p>
+</div>
+</div>
+<div class="flex items-center space-x-3">
+<div class="hidden md:flex items-center space-x-2 px-3 py-2 bg-white/10 rounded-lg backdrop-blur-sm">
+<div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+<span class="text-sm font-medium">Online</span>
+</div>
+<div class="text-right">
+<p class="font-bold text-lg" id="userName">User Name</p>
+<p class="text-sm text-purple-100 font-medium" id="userType">User Role</p>
+</div>
+</div>
+</div>
+</div>
+</header>
+
+<!-- Main Portal Container -->
+<div id="mainPortal" class="bg-gray-50 min-h-screen" style="display: none;">
+<div class="container mx-auto px-6 py-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Panel -->
+<div class="lg:col-span-1">
+<!-- Stats Cards -->
+<div class="grid grid-cols-2 gap-4 mb-6" id="statsCards">
+<div class="stats-card rounded-2xl p-6 text-center group">
+<div class="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+</svg>
+</div>
+<div class="text-3xl font-bold text-blue-600 mb-1" id="totalIssues">0</div>
+<div class="text-sm font-medium text-gray-600">Total Issues</div>
+<div class="mt-2 h-1 bg-gray-200 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full w-full"></div>
+</div>
+</div>
+<div class="stats-card rounded-2xl p-6 text-center group">
+<div class="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+</svg>
+</div>
+<div class="text-3xl font-bold text-red-600 mb-1" id="pendingIssues">0</div>
+<div class="text-sm font-medium text-gray-600">Pending</div>
+<div class="mt-2 h-1 bg-gray-200 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-red-500 to-red-600 rounded-full w-3/4"></div>
+</div>
+</div>
+</div>
+
+<!-- Create New Issue Form -->
+<div class="bg-white rounded-xl p-6 card-shadow mb-6" id="createIssueForm">
+<h2 class="text-xl font-semibold mb-4 text-gray-800">🎯 Report New Issue</h2>
+<form id="issueForm">
+<div class="mb-4">
+<label class="block text-sm font-medium text-gray-700 mb-2">Issue Title</label>
+<input type="text" id="issueTitle" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Brief description of your issue" required>
+</div>
+
+<div class="mb-4">
+<label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+<select id="issueCategory" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" required>
+<option value="academic">📚 Academic</option>
+<option value="facilities">🏢 Facilities</option>
+<option value="transport">🚌 Transport</option>
+<option value="cafeteria">🍽️ Cafeteria</option>
+<option value="library">📖 Library</option>
+<option value="other">❓ Other</option>
+</select>
+</div>
+
+<div class="mb-4">
+<label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+<select id="issuePriority" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" required>
+<option value="low">🟢 Low</option>
+<option value="medium">🟡 Medium</option>
+<option value="high">🔴 High</option>
+</select>
+</div>
+
+<div class="mb-4">
+<label class="block text-sm font-medium text-gray-700 mb-2">Tag Authority</label>
+<select id="authorityType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" required onchange="updateAuthorityOptions()">
+<option value="">Select Authority Type</option>
+<option value="hod">👨🏫 Head of Department</option>
+<option value="principal">👩💼 Principal</option>
+</select>
+</div>
+
+<div class="mb-4" id="specificAuthorityField" style="display: none;">
+<label class="block text-sm font-medium text-gray-700 mb-2" id="specificAuthorityLabel">Select Specific Authority</label>
+<select id="taggedTo" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" required>
+<option value="">Choose from available options</option>
+</select>
+</div>
+
+<div class="mb-4">
+<label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+<textarea id="issueDescription" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="Provide detailed information about your issue..." required></textarea>
+</div>
+
+<button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition duration-200">
+📤 Submit Issue
+</button>
+</form>
+</div>
+
+<!-- User Management Panel (Admin Only) -->
+<div class="bg-white rounded-xl p-6 card-shadow mb-6" id="userManagementPanel" style="display: none;">
+<h3 class="text-lg font-semibold mb-4 text-gray-800">👥 User Management</h3>
+<form id="createUserForm">
+<div class="mb-4">
+<label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+<input type="text" id="newUserName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="Enter full name" required>
+</div>
+
+<div class="mb-4">
+<label class="block text-sm font-medium text-gray-700 mb-2">Email/Username</label>
+<input type="email" id="newUserEmail" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="user@school.edu" required>
+</div>
+
+<div class="mb-4">
+<label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+<select id="newUserRole" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" required>
+<option value="">Select Role</option>
+<option value="student">👨🎓 Student</option>
+<option value="hod">👨🏫 Head of Department</option>
+<option value="principal">👩💼 Principal</option>
+</select>
+</div>
+
+<div class="mb-4" id="departmentField" style="display: none;">
+<label class="block text-sm font-medium text-gray-700 mb-2">Department</label>
+<select id="newUserDepartment" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+<option value="">Select Department</option>
+<option value="Engineering">Engineering</option>
+<option value="SIST">SIST</option>
+<option value="Pharmacy">Pharmacy</option>
+<option value="Nursing">Nursing</option>
+<option value="Management">Management</option>
+<option value="Education">Education</option>
+<option value="Politechnic">Polytechnical</option>
+</select>
+</div>
+
+<div class="mb-4" id="studentFields" style="display: none;">
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Student ID</label>
+<input type="text" id="newStudentId" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="STU001">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">trade</label>
+<select id="newStudentClass" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+<option value="">Select trade</option>
+<option value="Cse">B.tech cse</option>
+<option value="Mechanical">B.tech Mechanical</option>
+<option value="CivilEngineering">B.tech Civil </option>
+<option value="BCA">BCA</option>
+<option value="MCA">MCA</option>
+<option value="Bsc OTAT">Bsc OTAT</option>
+<option value="Bsc Radiology">Bsc Radiology</option>
+<option value="D Pharmacy">D Pharmacy</option>
+<option value="B Pharmacy">B Pharmacy</option>
+<option value="D Pharmacy Ayurveda">D Pharmacy Ayurveda</option>
+<option value="Bsc Nursing">Bsc Nursing</option>
+<option value="ANM">ANM</option>
+<option value="GNM">GNM</option>
+<option value="MBA">MBA</option>
+<option value="BBA">BBA</option>
+<option value="B.Com">B.com</option>
+<option value="ETT">ETT</option>
+<option value="B.ed">B.ed</option>
+<option value="Cse">Diploma Cse</option>
+<option value="Mechanical">Diploma Mechanical</option>
+<option value="Civil">Diploma Civil</option>
+
+
+</select>
+</div>
+</div>
+</div>
+
+<div class="mb-4">
+<label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+<div class="relative">
+<input type="password" id="newUserPassword" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="Enter password" required>
+<button type="button" onclick="generatePassword()" class="absolute right-2 top-2 px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+🎲 Generate
+</button>
+</div>
+</div>
+
+<button type="submit" class="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-700 hover:to-blue-700 transition duration-200">
+➕ Create User Account
+</button>
+</form>
+</div>
+
+<!-- Navigation Actions -->
+<div class="bg-white rounded-xl p-6 card-shadow mb-6">
+<h3 class="text-lg font-semibold mb-4 text-gray-800">🧭 Navigation</h3>
+<div class="space-y-3">
+<button onclick="goHome()" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition duration-300 font-medium tooltip" data-tooltip="Ctrl+H">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+</svg>
+<span>🏠 Back to Home</span>
+</button>
+<button onclick="logout()" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:from-red-600 hover:to-pink-600 transition duration-300 font-medium tooltip" data-tooltip="Ctrl+L">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+</svg>
+<span>🚪 Logout</span>
+</button>
+</div>
+<div class="mt-4 p-3 bg-gray-50 rounded-lg">
+<p class="text-xs text-gray-600 text-center">
+💡<strong>Keyboard Shortcuts:</strong><br>
+Ctrl+H = Home | Ctrl+L = Logout | Ctrl+R = Refresh<br>
+                                ESC = Close Modal/Back
+</p>
+</div>
+</div>
+
+<!-- Quick Actions -->
+<div class="bg-white rounded-xl p-6 card-shadow" id="quickActionsContainer">
+<h3 class="text-lg font-semibold mb-4 text-gray-800">⚡ Quick Actions</h3>
+<div class="space-y-2" id="quickActionsList">
+</div>
+</div>
+
+
+</div>
+
+<!-- Right Panel -->
+<div class="lg:col-span-2">
+<!-- Issues Dashboard -->
+<div class="bg-white rounded-xl card-shadow" id="issuesDashboard">
+<div class="p-6 border-b border-gray-200">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-semibold text-gray-800">📝 Issues Dashboard</h2>
+<div class="flex items-center space-x-3">
+<select id="sortBy" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+<option value="newest">Newest First</option>
+<option value="oldest">Oldest First</option>
+<option value="priority">Priority</option>
+<option value="deadline">Deadline</option>
+</select>
+<button onclick="refreshIssues()" class="px-4 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition duration-200">
+🔄 Refresh
+</button>
+</div>
+</div>
+</div>
+
+<div class="p-6">
+<div id="issuesList" class="space-y-4">
+</div>
+</div>
+</div>
+
+<!-- User Management Dashboard (Admin Only) -->
+<div class="bg-white rounded-xl card-shadow" id="usersDashboard" style="display: none;">
+<div class="p-6 border-b border-gray-200">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-semibold text-gray-800">👥 User Management</h2>
+<div class="flex items-center space-x-3">
+<select id="userFilter" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+<option value="all">All Users</option>
+<option value="student">Students</option>
+<option value="hod">HODs</option>
+<option value="principal">Principals</option>
+</select>
+<button onclick="showIssuesDashboard()" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200">
+📝 Back to Issues
+</button>
+</div>
+</div>
+</div>
+
+<div class="p-6">
+<div id="usersList" class="space-y-4">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Issue Detail Modal -->
+<div id="issueModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+<div class="bg-white rounded-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+<div class="p-6 border-b border-gray-200">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-semibold text-gray-800" id="modalTitle">Issue Details</h3>
+<button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+</svg>
+</button>
+</div>
+</div>
+<div class="p-6" id="modalContent">
+</div>
+</div>
+</div>
+
+<script>
+        // Application state
+        let currentPage = 'home';
+        let selectedRole = null;
+        let currentUser = null;
+        let isLoggedIn = false;
+        let currentFilter = 'all';
+
+        // Notification system
+        function showNotification(message, type = 'info', duration = 4000) {
+            const notification = document.getElementById('notification');
+notification.textContent = message;
+notification.className = `notification ${type}`;
+notification.classList.add('show');
+
+setTimeout(() => {
+notification.classList.remove('show');
+            }, duration);
+        }
+
+        // Loading overlay
+        function showLoading() {
+document.getElementById('loadingOverlay').classList.remove('hidden');
+document.getElementById('loadingOverlay').classList.add('flex');
+        }
+
+        function hideLoading() {
+document.getElementById('loadingOverlay').classList.add('hidden');
+document.getElementById('loadingOverlay').classList.remove('flex');
+        }
+
+        // Sample data - Clean slate for production use
+        let issues = [];
+
+        let users = [
+            {
+                id: 1,
+                name: "Mr. Tej Bahadur Singh",
+                email: "principal@sgi.edu",
+                role: "principal",
+                password: "principal123",
+createdAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+                status: "active"
+            },
+            {
+                id: 2,
+                name: "System Administrator",
+                email: "admin@sgi.edu",
+                role: "admin",
+                password: "admin123",
+createdAt: new Date(Date.now() - 100 * 24 * 60 * 60 * 1000),
+                status: "active"
+            }
+        ];
+
+        // User credentials - Clean slate for production use
+        const userCredentials = {
+            student: [
+                // Students will be added by admin as needed
+            ],
+            hod: [
+                // HODs will be added by admin as needed
+            ],
+            principal: [
+{ username: 'principal@sgi.edu', password: 'principal123', name: 'Mr. Tej Bahadur Singh', title: 'Principal' }
+            ],
+            admin: [
+{ username: 'admin@sgi.edu', password: 'admin123', name: 'System Administrator', title: 'Admin' }
+            ]
+        };
+
+        // Authority selection function
+        function updateAuthorityOptions() {
+            const authorityType = document.getElementById('authorityType').value;
+            const specificField = document.getElementById('specificAuthorityField');
+            const taggedToSelect = document.getElementById('taggedTo');
+            const specificLabel = document.getElementById('specificAuthorityLabel');
+
+            if (!authorityType) {
+specificField.style.display = 'none';
+                return;
+            }
+
+specificField.style.display = 'block';
+taggedToSelect.innerHTML = '<option value="">Choose from available options</option>';
+
+            if (authorityType === 'hod') {
+specificLabel.textContent = 'Select Head of Department';
+
+                // Get all active HODs
+                const activeHODs = users.filter(user =>user.role === 'hod' &&user.status === 'active');
+
+activeHODs.forEach(hod => {
+                    const option = document.createElement('option');
+option.value = `hod-${hod.id}`;
+option.textContent = `${hod.name} - ${hod.department}`;
+taggedToSelect.appendChild(option);
+                });
+
+                if (activeHODs.length === 0) {
+                    const option = document.createElement('option');
+option.value = '';
+option.textContent = 'No HODs available';
+option.disabled = true;
+taggedToSelect.appendChild(option);
+                }
+
+            } else if (authorityType === 'principal') {
+specificLabel.textContent = 'Select Principal';
+
+                // Get all active Principals
+                const activePrincipals = users.filter(user =>user.role === 'principal' &&user.status === 'active');
+
+activePrincipals.forEach(principal => {
+                    const option = document.createElement('option');
+option.value = `principal-${principal.id}`;
+option.textContent = principal.name;
+taggedToSelect.appendChild(option);
+                });
+
+                if (activePrincipals.length === 0) {
+                    const option = document.createElement('option');
+option.value = '';
+option.textContent = 'No Principals available';
+option.disabled = true;
+taggedToSelect.appendChild(option);
+                }
+            }
+        }
+
+        // Navigation functions
+        function selectRole(role) {
+selectedRole = role;
+showLoginPage();
+        }
+
+        function showLoginPage() {
+document.getElementById('homePage').style.display = 'none';
+document.getElementById('loginPage').style.display = 'flex';
+document.getElementById('mainPortal').style.display = 'none';
+document.getElementById('portalHeader').style.display = 'none';
+
+updateLoginPageContent();
+currentPage = 'login';
+        }
+
+        function goBackToHome() {
+            try {
+                // Hide all pages and show home page
+document.getElementById('homePage').style.display = 'flex';
+document.getElementById('loginPage').style.display = 'none';
+document.getElementById('mainPortal').style.display = 'none';
+document.getElementById('portalHeader').style.display = 'none';
+
+                // Reset dashboard views
+document.getElementById('issuesDashboard').style.display = 'block';
+document.getElementById('usersDashboard').style.display = 'none';
+
+                // Reset state variables
+selectedRole = null;
+currentUser = null;
+isLoggedIn = false;
+currentPage = 'home';
+currentFilter = 'all';
+
+                // Clear all forms
+document.getElementById('loginForm').reset();
+                if (document.getElementById('issueForm')) {
+document.getElementById('issueForm').reset();
+                }
+                if (document.getElementById('createUserForm')) {
+document.getElementById('createUserForm').reset();
+                }
+
+                // Reset form field visibility
+                const departmentField = document.getElementById('departmentField');
+                const studentFields = document.getElementById('studentFields');
+                if (departmentField) departmentField.style.display = 'none';
+                if (studentFields) studentFields.style.display = 'none';
+
+                // Reset any modal states
+closeModal();
+
+showNotification('🏠 Successfully returned to home page!', 'success');
+            } catch (error) {
+console.error('Back button error:', error);
+showNotification('🏠 Navigating to home page...', 'info');
+                // Force page reload if there's an error
+setTimeout(() =>window.location.reload(), 1000);
+            }
+        }
+
+        function showPortal() {
+document.getElementById('homePage').style.display = 'none';
+document.getElementById('loginPage').style.display = 'none';
+document.getElementById('mainPortal').style.display = 'block';
+document.getElementById('portalHeader').style.display = 'block';
+
+currentPage = 'portal';
+updateUserInterface();
+renderIssues();
+updateStats();
+        }
+
+        function logout() {
+            if (confirm('🚪 Are you sure you want to logout?')) {
+                try {
+                    // Reset all state variables
+currentUser = null;
+isLoggedIn = false;
+selectedRole = null;
+currentFilter = 'all';
+currentPage = 'home';
+
+                    // Hide all portal elements and show home page
+document.getElementById('homePage').style.display = 'flex';
+document.getElementById('loginPage').style.display = 'none';
+document.getElementById('mainPortal').style.display = 'none';
+document.getElementById('portalHeader').style.display = 'none';
+
+                    // Reset dashboard views
+document.getElementById('issuesDashboard').style.display = 'block';
+document.getElementById('usersDashboard').style.display = 'none';
+
+                    // Clear all forms safely
+document.getElementById('loginForm').reset();
+                    if (document.getElementById('issueForm')) {
+document.getElementById('issueForm').reset();
+                    }
+                    if (document.getElementById('createUserForm')) {
+document.getElementById('createUserForm').reset();
+                    }
+
+                    // Reset form field visibility safely
+                    const departmentField = document.getElementById('departmentField');
+                    const studentFields = document.getElementById('studentFields');
+                    if (departmentField) departmentField.style.display = 'none';
+                    if (studentFields) studentFields.style.display = 'none';
+
+                    // Reset any modal states
+closeModal();
+
+                    // Show success message
+showNotification('✅ You have been successfully logged out!', 'success');
+                } catch (error) {
+console.error('Logout error:', error);
+showNotification('🚪 Logging out...', 'info');
+                    // Force page reload if there's an error
+setTimeout(() =>window.location.reload(), 1000);
+                }
+            }
+        }
+
+        function goHome() {
+            if (confirm('🏠 Are you sure you want to go back to home? You will be logged out.')) {
+                try {
+                    // Reset all state variables
+currentUser = null;
+isLoggedIn = false;
+selectedRole = null;
+currentFilter = 'all';
+currentPage = 'home';
+
+                    // Hide all portal elements and show home page
+document.getElementById('homePage').style.display = 'flex';
+document.getElementById('loginPage').style.display = 'none';
+document.getElementById('mainPortal').style.display = 'none';
+document.getElementById('portalHeader').style.display = 'none';
+
+                    // Reset dashboard views
+document.getElementById('issuesDashboard').style.display = 'block';
+document.getElementById('usersDashboard').style.display = 'none';
+
+                    // Clear all forms safely
+document.getElementById('loginForm').reset();
+                    if (document.getElementById('issueForm')) {
+document.getElementById('issueForm').reset();
+                    }
+                    if (document.getElementById('createUserForm')) {
+document.getElementById('createUserForm').reset();
+                    }
+
+                    // Reset form field visibility safely
+                    const departmentField = document.getElementById('departmentField');
+                    const studentFields = document.getElementById('studentFields');
+                    if (departmentField) departmentField.style.display = 'none';
+                    if (studentFields) studentFields.style.display = 'none';
+
+                    // Reset any modal states
+closeModal();
+
+                    // Show success message
+showNotification('🏠 Successfully returned to home page!', 'success');
+                } catch (error) {
+console.error('Home button error:', error);
+showNotification('🏠 Navigating to home page...', 'info');
+                    // Force page reload if there's an error
+setTimeout(() =>window.location.reload(), 1000);
+                }
+            }
+        }
+
+        function updateLoginPageContent() {
+            const roleData = {
+                student: {
+                    icon: '👨🎓',
+                    title: 'Student Login',
+                    description: 'Enter your credentials to access the student portal'
+                },
+                hod: {
+                    icon: '👨🏫',
+                    title: 'HOD Login',
+                    description: 'Enter your credentials to access the department management portal'
+                },
+                principal: {
+                    icon: '👩💼',
+                    title: 'Principal Login',
+                    description: 'Enter your credentials to access the school administration portal'
+                },
+                admin: {
+                    icon: '⚙️',
+                    title: 'Administrator Login',
+                    description: 'Enter your credentials to access the system administration portal'
+                }
+            };
+
+            const role = roleData[selectedRole];
+document.getElementById('loginRoleIcon').textContent = role.icon;
+document.getElementById('loginRoleTitle').textContent = role.title;
+document.getElementById('loginRoleDescription').textContent = role.description;
+        }
+
+        function authenticateUser(username, password) {
+            // First check the users array directly for more reliable authentication
+            const user = users.find(u =>
+u.email.toLowerCase() === username.toLowerCase() &&
+u.password === password &&
+u.role === selectedRole&&
+u.status === 'active'
+            );
+
+            if (user) {
+                return {
+                    username: user.email,
+                    password: user.password,
+                    name: user.name,
+                    id: user.studentId || user.id,
+                    class: user.class,
+                    department: user.department,
+                    title: user.role === 'principal' ? 'Principal' : (user.role === 'admin' ? 'Admin' : undefined)
+                };
+            }
+
+            // Fallback to roleCredentials for backward compatibility
+            const roleCredentials = userCredentials[selectedRole];
+            if (roleCredentials) {
+                return roleCredentials.find(cred =>
+cred.username.toLowerCase() === username.toLowerCase() &&
+cred.password === password
+                );
+            }
+
+            return null;
+        }
+
+        // Update UI based on user role
+        function updateUserInterface() {
+            if (!currentUser) return;
+
+            const role = currentUser.role;
+
+            // Update header with user info
+document.getElementById('userName').textContent = currentUser.name;
+
+            // Hide all panels first
+document.getElementById('createIssueForm').style.display = 'none';
+document.getElementById('userManagementPanel').style.display = 'none';
+document.getElementById('statsCards').style.display = 'none';
+showIssuesDashboard();
+
+            switch(role) {
+                case 'student':
+showStudentPortal();
+                    break;
+                case 'hod':
+showHODPortal();
+                    break;
+                case 'principal':
+showPrincipalPortal();
+                    break;
+                case 'admin':
+showAdminPortal();
+                    break;
+            }
+        }
+
+        function showStudentPortal() {
+document.getElementById('createIssueForm').style.display = 'block';
+document.getElementById('userType').textContent = `Student Portal - ${currentUser.class ? `Class ${currentUser.class}` : 'Student'}`;
+
+updateQuickActions([
+{ text: '📋 My Issues', action: "filterIssues('my')" },
+{ text: '🔓 Open Issues', action: "filterIssues('open')" },
+{ text: '🔄 In Progress', action: "filterIssues('in-progress')" },
+{ text: '✅ Resolved Issues', action: "filterIssues('resolved')" }
+            ]);
+        }
+
+        function showHODPortal() {
+document.getElementById('statsCards').style.display = 'block';
+document.getElementById('userType').textContent = `HOD Portal - ${currentUser.department || 'Department'}`;
+
+updateQuickActions([
+{ text: '📥 Assigned to Me', action: "filterIssues('assigned')" },
+{ text: '🔓 Open Issues', action: "filterIssues('open')" },
+{ text: '🔄 In Progress', action: "filterIssues('in-progress')" },
+{ text: '⚠️ Escalated Issues', action: "filterIssues('escalated')" },
+{ text: '📊 Department Stats', action: "showDepartmentStats()" }
+            ]);
+        }
+
+        function showPrincipalPortal() {
+document.getElementById('statsCards').style.display = 'block';
+document.getElementById('userType').textContent = 'Principal Portal - School Administration';
+
+updateQuickActions([
+{ text: '📥 High Priority Issues', action: "filterIssues('high-priority')" },
+{ text: '⚠️ Escalated Issues', action: "filterIssues('escalated')" },
+{ text: '📊 College Overview', action: "showCollegeStats()" },
+{ text: '🏢 All Departments', action: "showAllDepartments()" },
+{ text: '📈 Monthly Reports', action: "showMonthlyReports()" }
+            ]);
+        }
+
+        function showAdminPortal() {
+document.getElementById('userManagementPanel').style.display = 'block';
+document.getElementById('statsCards').style.display = 'block';
+document.getElementById('userType').textContent = 'System Administrator Portal';
+
+updateQuickActions([
+{ text: '👥 Manage Users', action: "showUserManagement()" },
+{ text: '⚠️ System Issues', action: "filterIssues('escalated')" },
+{ text: '🗑️ Bulk Delete Issues', action: "showBulkDeleteOptions()" },
+{ text: '❌ Close All Pending', action: "closeAllPendingIssues()" },
+{ text: '👥 Bulk User Actions', action: "showBulkUserOptions()" },
+{ text: '🔐 Reset All Passwords', action: "resetAllUserPasswords()" },
+{ text: '📊 System Analytics', action: "showSystemAnalytics()" },
+{ text: '🔧 System Settings', action: "showSystemSettings()" }
+            ]);
+        }
+
+        function updateQuickActions(actions) {
+            const quickActionsList = document.getElementById('quickActionsList');
+quickActionsList.innerHTML = actions.map(action =>
+                `<button onclick="${action.action}" class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 transition duration-200">${action.text}</button>`
+).join('');
+        }
+
+        // Render issues list
+        function renderIssues() {
+            const issuesList = document.getElementById('issuesList');
+            const userRole = currentUser.role;
+
+            let filteredIssues = getFilteredIssuesForRole(userRole);
+
+            if (filteredIssues.length === 0) {
+issuesList.innerHTML = `
+<div class="text-center py-12">
+<div class="text-6xl mb-4">📭</div>
+<h3 class="text-lg font-semibold text-gray-600 mb-2">No Issues Found</h3>
+<p class="text-gray-500">There are no issues to display for your current role and filter.</p>
+</div>
+                `;
+                return;
+            }
+
+issuesList.innerHTML = filteredIssues.map(issue => {
+                const timeLeft = getTimeLeft(issue.deadline);
+                const isOverdue = new Date() >issue.deadline&&issue.status !== 'resolved';
+
+                return `
+<div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-200 priority-${issue.priority} cursor-pointer" onclick="openIssueModal(${issue.id})">
+<div class="flex items-start justify-between mb-3">
+<div class="flex-1">
+<h3 class="font-semibold text-gray-800 mb-1">${issue.title}</h3>
+<p class="text-sm text-gray-600 mb-2">${issue.description.substring(0, 100)}...</p>
+<div class="flex items-center space-x-4 text-xs text-gray-500">
+<span>👤 ${issue.createdBy}</span>
+<span>📅 ${formatDate(issue.createdAt)}</span>
+<span>🏷️ ${getCategoryIcon(issue.category)} ${issue.category}</span>
+</div>
+</div>
+<div class="flex flex-col items-end space-y-2">
+<span class="px-3 py-1 rounded-full text-xs font-medium status-${issue.status}">
+                                    ${getStatusText(issue.status)}
+</span>
+<div class="text-xs ${isOverdue ? 'text-red-600 timer-warning' : 'text-gray-500'}">
+                                    ${isOverdue ? '⏰ Overdue!' : `⏱️ ${timeLeft}`}
+</div>
+</div>
+</div>
+
+                        ${userRole !== 'student' ? `
+<div class="flex items-center justify-between pt-3 border-t border-gray-100">
+<div class="flex space-x-2">
+                                    ${issue.status === 'open' ? `
+<button onclick="event.stopPropagation(); updateIssueStatus(${issue.id}, 'in-progress');" class="px-3 py-1 bg-blue-100 text-blue-600 rounded text-xs hover:bg-blue-200">
+🔄 Start Working
+</button>
+                                    ` : ''}
+                                    ${issue.status === 'in-progress' ? `
+<button onclick="event.stopPropagation(); updateIssueStatus(${issue.id}, 'resolved');" class="px-3 py-1 bg-green-100 text-green-600 rounded text-xs hover:bg-green-200">
+✅ Mark Resolved
+</button>
+                                    ` : ''}
+                                    ${userRole === 'admin' ? `
+<button onclick="event.stopPropagation(); deleteIssue(${issue.id});" class="px-3 py-1 bg-red-100 text-red-600 rounded text-xs hover:bg-red-200">
+🗑️ Delete
+</button>
+                                        ${issue.status !== 'resolved' ? `
+<button onclick="event.stopPropagation(); closeIssue(${issue.id});" class="px-3 py-1 bg-gray-100 text-gray-600 rounded text-xs hover:bg-gray-200">
+❌ Close
+</button>
+                                        ` : ''}
+                                    ` : ''}
+</div>
+<span class="text-xs text-gray-500">Tagged to: ${getTaggedToText(issue)}</span>
+</div>
+                        ` : ''}
+</div>
+                `;
+            }).join('');
+        }
+
+        function getFilteredIssuesForRole(userRole) {
+            let filteredIssues = [];
+
+            switch(userRole) {
+                case 'student':
+filteredIssues = issues.filter(issue =>issue.createdBy === currentUser.name);
+                    break;
+                case 'hod':
+filteredIssues = issues.filter(issue => {
+                        // Check if issue is tagged to this specific HOD
+                        if (issue.taggedToSpecific&&issue.taggedToSpecific.type === 'hod') {
+                            const hodUser = users.find(u =>u.email === currentUser.email&&u.role === 'hod');
+                            return issue.taggedToSpecific.id === hodUser?.id || issue.status === 'escalated';
+                        }
+                        // Fallback for old format
+                        return issue.taggedTo === 'hod' || issue.status === 'escalated';
+                    });
+                    break;
+                case 'principal':
+filteredIssues = issues.filter(issue => {
+                        // Check if issue is tagged to this specific Principal
+                        if (issue.taggedToSpecific&&issue.taggedToSpecific.type === 'principal') {
+                            const principalUser = users.find(u =>u.email === currentUser.email&&u.role === 'principal');
+                            return issue.taggedToSpecific.id === principalUser?.id || issue.status === 'escalated' || issue.priority === 'high';
+                        }
+                        // Fallback for old format
+                        return issue.taggedTo === 'principal' || issue.status === 'escalated' || issue.priority === 'high';
+                    });
+                    break;
+                case 'admin':
+filteredIssues = issues.filter(issue =>
+issue.status === 'escalated' || 
+issue.taggedTo === 'admin'
+                    );
+                    break;
+                default:
+filteredIssues = issues;
+            }
+
+            if (currentFilter&&currentFilter !== 'all') {
+filteredIssues = applyCurrentFilter(filteredIssues);
+            }
+
+            return filteredIssues;
+        }
+
+        function applyCurrentFilter(filteredIssues) {
+            switch(currentFilter) {
+                case 'my':
+                    return filteredIssues.filter(issue =>issue.createdBy === currentUser.name);
+                case 'open':
+                    return filteredIssues.filter(issue =>issue.status === 'open');
+                case 'in-progress':
+                    return filteredIssues.filter(issue =>issue.status === 'in-progress');
+                case 'escalated':
+                    return filteredIssues.filter(issue =>issue.status === 'escalated');
+                case 'resolved':
+                    return filteredIssues.filter(issue =>issue.status === 'resolved');
+                case 'assigned':
+                    return filteredIssues.filter(issue => {
+                        if (currentUser.role === 'hod') {
+                            if (issue.taggedToSpecific&&issue.taggedToSpecific.type === 'hod') {
+                                const hodUser = users.find(u =>u.email === currentUser.email&&u.role === 'hod');
+                                return issue.taggedToSpecific.id === hodUser?.id;
+                            }
+                            return issue.taggedTo === 'hod';
+                        } else if (currentUser.role === 'principal') {
+                            if (issue.taggedToSpecific&&issue.taggedToSpecific.type === 'principal') {
+                                const principalUser = users.find(u =>u.email === currentUser.email&&u.role === 'principal');
+                                return issue.taggedToSpecific.id === principalUser?.id;
+                            }
+                            return issue.taggedTo === 'principal';
+                        }
+                        return false;
+                    });
+                case 'high-priority':
+                    return filteredIssues.filter(issue =>issue.priority === 'high');
+                default:
+                    return filteredIssues;
+            }
+        }
+
+        function filterIssues(filter) {
+currentFilter = filter;
+renderIssues();
+        }
+
+        function updateIssueStatus(issueId, newStatus) {
+            const issue = issues.find(i => i.id === issueId);
+            if (issue) {
+issue.status = newStatus;
+                if (newStatus === 'resolved') {
+issue.resolvedAt = new Date();
+                }
+renderIssues();
+updateStats();
+showNotification(`✅ Issue status updated to ${newStatus.replace('-', ' ')}!`, 'success');
+            }
+        }
+
+        function deleteIssue(issueId) {
+            const issue = issues.find(i => i.id === issueId);
+            if (!issue) return;
+
+            if (confirm(`🗑️ Are you sure you want to permanently delete this issue?\n\n"${issue.title}"\n\nThis action cannot be undone.`)) {
+                issues = issues.filter(i => i.id !== issueId);
+renderIssues();
+updateStats();
+showNotification('🗑️ Issue deleted successfully!', 'success');
+            }
+        }
+
+        function closeIssue(issueId) {
+            const issue = issues.find(i => i.id === issueId);
+            if (!issue) return;
+
+            if (confirm(`❌ Are you sure you want to close this issue?\n\n"${issue.title}"\n\nThis will mark it as resolved without further action.`)) {
+issue.status = 'resolved';
+issue.resolvedAt = new Date();
+issue.closedBy = currentUser.name;
+issue.closedReason = 'Administratively closed';
+renderIssues();
+updateStats();
+showNotification('❌ Issue closed successfully!', 'success');
+            }
+        }
+
+        function updateIssueStatusAndClose(issueId, newStatus) {
+updateIssueStatus(issueId, newStatus);
+closeModal();
+        }
+
+        function openIssueModal(issueId) {
+            const issue = issues.find(i => i.id === issueId);
+            if (!issue) return;
+
+            const modal = document.getElementById('issueModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+
+modalTitle.textContent = issue.title;
+
+            const timeLeft = getTimeLeft(issue.deadline);
+            const isOverdue = new Date() >issue.deadline&&issue.status !== 'resolved';
+
+modalContent.innerHTML = `
+<div class="space-y-6">
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+<span class="px-3 py-1 rounded-full text-sm font-medium status-${issue.status}">
+                                ${getStatusText(issue.status)}
+</span>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+<span class="text-sm">${getPriorityIcon(issue.priority)} ${issue.priority.toUpperCase()}</span>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+<span class="text-sm">${getCategoryIcon(issue.category)} ${issue.category}</span>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Time Remaining</label>
+<span class="text-sm ${isOverdue ? 'text-red-600 font-semibold' : 'text-gray-600'}">
+                                ${isOverdue ? '⏰ Overdue!' : `⏱️ ${timeLeft}`}
+</span>
+</div>
+</div>
+
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+<p class="text-gray-600 bg-gray-50 p-3 rounded-lg">${issue.description}</p>
+</div>
+
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Created By</label>
+<p class="text-sm text-gray-600">👤 ${issue.createdBy}</p>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Tagged To</label>
+<p class="text-sm text-gray-600">${getTaggedToText(issue)}</p>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Created At</label>
+<p class="text-sm text-gray-600">📅 ${formatDateTime(issue.createdAt)}</p>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Deadline</label>
+<p class="text-sm text-gray-600">⏰ ${formatDateTime(issue.deadline)}</p>
+</div>
+</div>
+
+                    ${issue.comments.length>0 ? `
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Comments</label>
+<div class="space-y-2">
+                                ${issue.comments.map(comment => `
+<div class="bg-gray-50 p-3 rounded-lg">
+<div class="flex items-center justify-between mb-1">
+<span class="text-sm font-medium text-gray-700">${comment.author}</span>
+<span class="text-xs text-gray-500">${formatDateTime(comment.time)}</span>
+</div>
+<p class="text-sm text-gray-600">${comment.text}</p>
+</div>
+                                `).join('')}
+</div>
+</div>
+                    ` : ''}
+
+                    ${currentUser.role !== 'student' ? `
+<div class="border-t pt-4">
+<div class="flex space-x-3">
+                                ${issue.status === 'open' ? `
+<button onclick="updateIssueStatusAndClose(${issue.id}, 'in-progress')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+🔄 Start Working
+</button>
+                                ` : ''}
+                                ${issue.status === 'in-progress' ? `
+<button onclick="updateIssueStatusAndClose(${issue.id}, 'resolved')" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+✅ Mark as Resolved
+</button>
+                                ` : ''}
+<button onclick="addComment(${issue.id})" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
+💬 Add Comment
+</button>
+</div>
+</div>
+                    ` : ''}
+</div>
+            `;
+
+modal.classList.remove('hidden');
+modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            try {
+                const modal = document.getElementById('issueModal');
+                if (modal) {
+modal.classList.add('hidden');
+modal.classList.remove('flex');
+                }
+            } catch (error) {
+console.error('Modal close error:', error);
+            }
+        }
+
+        // Keyboard shortcuts and navigation
+document.addEventListener('keydown', function(e) {
+            // Close modal with Escape key
+            if (e.key === 'Escape') {
+closeModal();
+            }
+
+            // Navigation shortcuts (only when logged in)
+            if (isLoggedIn&&e.ctrlKey) {
+                switch(e.key.toLowerCase()) {
+                    case 'h':
+e.preventDefault();
+goHome();
+                        break;
+                    case 'l':
+e.preventDefault();
+logout();
+                        break;
+                    case 'r':
+e.preventDefault();
+refreshIssues();
+                        break;
+                }
+            }
+
+            // Back to home from login page with Escape
+            if (currentPage === 'login' &&e.key === 'Escape') {
+goBackToHome();
+            }
+        });
+
+        // Close modal when clicking outside
+document.getElementById('issueModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+closeModal();
+            }
+        });
+
+        function addComment(issueId) {
+            const comment = prompt('💬 Enter your comment:');
+            if (comment &&comment.trim()) {
+                const issue = issues.find(i => i.id === issueId);
+                if (issue) {
+issue.comments.push({
+                        author: currentUser.name,
+                        text: comment.trim(),
+                        time: new Date()
+                    });
+showNotification('💬 Comment added successfully!', 'success');
+openIssueModal(issueId); // Refresh the modal to show new comment
+                }
+            }
+        }
+
+        // User Management Functions
+        function showUserManagement() {
+document.getElementById('issuesDashboard').style.display = 'none';
+document.getElementById('usersDashboard').style.display = 'block';
+renderUsers();
+        }
+
+        function showIssuesDashboard() {
+document.getElementById('issuesDashboard').style.display = 'block';
+document.getElementById('usersDashboard').style.display = 'none';
+        }
+
+        function renderUsers() {
+            const usersList = document.getElementById('usersList');
+            const filter = document.getElementById('userFilter').value;
+
+            let filteredUsers = users;
+            if (filter !== 'all') {
+filteredUsers = users.filter(user =>user.role === filter);
+            }
+
+            if (filteredUsers.length === 0) {
+usersList.innerHTML = `
+<div class="text-center py-12">
+<div class="text-6xl mb-4">👥</div>
+<h3 class="text-lg font-semibold text-gray-600 mb-2">No Users Found</h3>
+<p class="text-gray-500">No users match the selected filter.</p>
+</div>
+                `;
+                return;
+            }
+
+usersList.innerHTML = filteredUsers.map(user => `
+<div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-200">
+<div class="flex items-start justify-between mb-3">
+<div class="flex-1">
+<div class="flex items-center space-x-3 mb-2">
+<h3 class="font-semibold text-gray-800">${user.name}</h3>
+<span class="px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}">
+                                    ${getRoleIcon(user.role)} ${user.role.toUpperCase()}
+</span>
+<span class="px-2 py-1 rounded-full text-xs font-medium ${user.status === 'active' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
+                                    ${user.status === 'active' ? '✅ Active' : '❌ Inactive'}
+</span>
+</div>
+<p class="text-sm text-gray-600 mb-2">📧 ${user.email}</p>
+<div class="flex items-center space-x-4 text-xs text-gray-500">
+                                ${user.studentId ? `<span>🆔 ${user.studentId}</span>` : ''}
+                                ${user.class ? `<span>🎓 Class ${user.class}</span>` : ''}
+                                ${user.department ? `<span>🏢 ${user.department}</span>` : ''}
+<span>📅 Created ${formatDate(user.createdAt)}</span>
+</div>
+</div>
+<div class="flex flex-col space-y-2">
+<button onclick="showUserCredentials(${user.id})" class="px-3 py-1 bg-blue-100 text-blue-600 rounded text-xs hover:bg-blue-200 transition duration-200">
+🔑 Show Credentials
+</button>
+<button onclick="changeUserPassword(${user.id})" class="px-3 py-1 bg-purple-100 text-purple-600 rounded text-xs hover:bg-purple-200 transition duration-200">
+🔐 Change Password
+</button>
+<button onclick="toggleUserStatus(${user.id})" class="px-3 py-1 ${user.status === 'active' ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-green-100 text-green-600 hover:bg-green-200'} rounded text-xs transition duration-200">
+                                ${user.status === 'active' ? '🚫 Deactivate' : '✅ Activate'}
+</button>
+<button onclick="deleteUser(${user.id})" class="px-3 py-1 bg-red-100 text-red-600 rounded text-xs hover:bg-red-200 transition duration-200">
+🗑️ Delete
+</button>
+</div>
+</div>
+</div>
+            `).join('');
+        }
+
+        function generatePassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let password = '';
+            for (let i = 0; i< 8; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+document.getElementById('newUserPassword').value = password;
+        }
+
+        function showUserCredentials(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                const message = `🔑 Login Credentials for ${user.name}:\n\nUsername: ${user.email}\nPassword: ${user.password}\n\n⚠️ Please share these credentials securely with the user.`;
+                alert(message);
+
+                // Copy to clipboard if available
+                if (navigator.clipboard) {
+navigator.clipboard.writeText(`Username: ${user.email}\nPassword: ${user.password}`).then(() => {
+showNotification('📋 Credentials copied to clipboard!', 'success');
+                    });
+                }
+            }
+        }
+
+        function changeUserPassword(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+
+            const newPassword = prompt(`🔐 Enter new password for ${user.name}:\n\nCurrent password: ${user.password}\n\nLeave empty to generate a random password:`);
+
+            if (newPassword === null) return; // User cancelled
+
+            let finalPassword = newPassword.trim();
+
+            if (!finalPassword) {
+                // Generate random password
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+finalPassword = '';
+                for (let i = 0; i< 8; i++) {
+finalPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+            }
+
+            if (finalPassword.length< 6) {
+showNotification('❌ Password must be at least 6 characters long!', 'error');
+                return;
+            }
+
+            // Update user password
+            const oldPassword = user.password;
+user.password = finalPassword;
+
+            // Update credentials array
+            const roleCredentials = userCredentials[user.role];
+            if (roleCredentials) {
+                const credIndex = roleCredentials.findIndex(cred =>cred.username === user.email);
+                if (credIndex !== -1) {
+roleCredentials[credIndex].password = finalPassword;
+                }
+            }
+
+renderUsers();
+showNotification(`🔐 Password changed successfully for ${user.name}!\n\nNew password: ${finalPassword}`, 'success', 6000);
+
+            // Show credentials automatically
+setTimeout(() => {
+                const message = `🔑 Updated Credentials for ${user.name}:\n\nUsername: ${user.email}\nNew Password: ${finalPassword}\n\n⚠️ Please share these credentials securely with the user.`;
+                alert(message);
+
+                // Copy to clipboard
+                if (navigator.clipboard) {
+navigator.clipboard.writeText(`Username: ${user.email}\nPassword: ${finalPassword}`).then(() => {
+showNotification('📋 New credentials copied to clipboard!', 'success');
+                    });
+                }
+            }, 1000);
+        }
+
+        function toggleUserStatus(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                const oldStatus = user.status;
+user.status = user.status === 'active' ? 'inactive' : 'active';
+renderUsers();
+showNotification(`✅ User ${user.name} has been ${user.status === 'active' ? 'activated' : 'deactivated'}!`, 'success');
+
+                // Update credentials array
+                const roleCredentials = userCredentials[user.role];
+                if (roleCredentials) {
+                    const credIndex = roleCredentials.findIndex(cred =>cred.username === user.email);
+                    if (credIndex !== -1) {
+                        if (user.status === 'inactive') {
+roleCredentials.splice(credIndex, 1);
+                        }
+                    } else if (user.status === 'active') {
+                        // Re-add to credentials if reactivated
+                        const credentialEntry = {
+                            username: user.email,
+                            password: user.password,
+                            name: user.name
+                        };
+
+                        if (user.role === 'student') {
+                            credentialEntry.id = user.studentId;
+credentialEntry.class = user.class;
+                        } else if (user.role === 'hod') {
+credentialEntry.department = user.department;
+                        } else if (user.role === 'principal') {
+credentialEntry.title = 'Principal';
+                        }
+
+roleCredentials.push(credentialEntry);
+                    }
+                }
+            }
+        }
+
+        function deleteUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+
+            // Prevent admin from deleting themselves
+            if (currentUser&&user.email === currentUser.email) {
+showNotification('❌ You cannot delete your own account!', 'error');
+                return;
+            }
+
+            // Count user's issues
+            const userIssues = issues.filter(issue =>issue.createdBy === user.name);
+            const issueCount = userIssues.length;
+
+            const confirmMessage = `⚠️ Are you sure you want to delete ${user.name}?\n\nUser Details:\n• Email: ${user.email}\n• Role: ${user.role.toUpperCase()}\n• Status: ${user.status}\n• Created Issues: ${issueCount}\n\nThis action will:\n• Remove the user account permanently\n• Disable their login access\n• Keep their issue history for records\n• Cannot be undone\n\nType "DELETE" to confirm:`;
+
+            const confirmation = prompt(confirmMessage);
+
+            if (confirmation === 'DELETE') {
+                // Remove from users array
+                users = users.filter(u => u.id !== userId);
+
+                // Remove from credentials
+                const roleCredentials = userCredentials[user.role];
+                if (roleCredentials) {
+                    const credIndex = roleCredentials.findIndex(cred =>cred.username === user.email);
+                    if (credIndex !== -1) {
+roleCredentials.splice(credIndex, 1);
+                    }
+                }
+
+renderUsers();
+showNotification(`🗑️ User ${user.name} has been permanently deleted!\n\nDeleted: ${user.email} (${user.role})\nIssues preserved: ${issueCount}`, 'success', 5000);
+
+                // Log the deletion
+console.log(`Admin ${currentUser.name} deleted user: ${user.name} (${user.email}) at ${new Date().toISOString()}`);
+            } else if (confirmation !== null) {
+showNotification('❌ Deletion cancelled. You must type "DELETE" exactly to confirm.', 'error');
+            }
+        }
+
+        function getRoleColor(role) {
+            const colors = {
+                'student': 'bg-blue-100 text-blue-600',
+                'hod': 'bg-purple-100 text-purple-600',
+                'principal': 'bg-indigo-100 text-indigo-600',
+                'admin': 'bg-gray-100 text-gray-600'
+            };
+            return colors[role] || 'bg-gray-100 text-gray-600';
+        }
+
+        function getRoleIcon(role) {
+            const icons = {
+                'student': '👨🎓',
+                'hod': '👨🏫',
+                'principal': '👩💼',
+                'admin': '⚙️'
+            };
+            return icons[role] || '👤';
+        }
+
+        // Utility functions
+        function getTimeLeft(deadline) {
+            const now = new Date();
+            const diff = deadline - now;
+
+            if (diff <= 0) return 'Overdue';
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+            if (hours > 0) {
+                return `${hours}h ${minutes}m left`;
+            } else {
+                return `${minutes}m left`;
+            }
+        }
+
+        function formatDate(date) {
+            return date.toLocaleDateString();
+        }
+
+        function formatDateTime(date) {
+            return date.toLocaleString();
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'open': '🔓 Open',
+                'in-progress': '🔄 In Progress',
+                'escalated': '⚠️ Escalated',
+                'resolved': '✅ Resolved'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getCategoryIcon(category) {
+            const iconMap = {
+                'academic': '📚',
+                'facilities': '🏢',
+                'transport': '🚌',
+                'cafeteria': '🍽️',
+                'library': '📖',
+                'other': '❓'
+            };
+            return iconMap[category] || '❓';
+        }
+
+        function getPriorityIcon(priority) {
+            const iconMap = {
+                'low': '🟢',
+                'medium': '🟡',
+                'high': '🔴'
+            };
+            return iconMap[priority] || '🟡';
+        }
+
+        function getTaggedToText(issue) {
+            // Handle new format with specific authority info
+            if (issue.taggedToSpecific) {
+                const specific = issue.taggedToSpecific;
+                if (specific.type === 'hod') {
+                    return `👨🏫 ${specific.name} (${specific.department})`;
+                } else if (specific.type === 'principal') {
+                    return `👩💼 ${specific.name}`;
+                }
+            }
+
+            // Fallback for old format
+            const tagMap = {
+                'hod': '👨🏫 Head of Department',
+                'principal': '👩💼 Principal',
+                'admin': '⚙️ Administrator'
+            };
+            return tagMap[issue.taggedTo] || issue.taggedTo;
+        }
+
+        function updateStats() {
+document.getElementById('totalIssues').textContent = issues.length;
+document.getElementById('pendingIssues').textContent = issues.filter(i =>i.status !== 'resolved').length;
+        }
+
+        function refreshIssues() {
+checkAndEscalateIssues();
+renderIssues();
+updateStats();
+        }
+
+        function checkAndEscalateIssues() {
+            const now = new Date();
+issues.forEach(issue => {
+                if (now >issue.deadline&&issue.status !== 'resolved' &&issue.status !== 'escalated') {
+issue.status = 'escalated';
+issue.taggedTo = 'admin';
+issue.escalatedAt = now;
+                }
+            });
+        }
+
+        // Dashboard functions
+        function showDepartmentStats() {
+showNotification('📊 Department Statistics: Computer Science - 15 issues, 12 resolved this month, 18hr avg resolution time, 4.2/5 satisfaction', 'info', 6000);
+        }
+
+        function showCollegeStats() {
+showNotification('📊 College Overview: 1,250 students, 85 staff, 24 active issues, 92% resolution rate, 4.2hr avg response time', 'info', 6000);
+        }
+
+        function showAllDepartments() {
+showNotification('🏢 Department Overview: Engineering(15), SIST(8), Pharmacy(12), Nursing(6), Management(4), Polytechnical(3) issues', 'info', 6000);
+        }
+
+        function showMonthlyReports() {
+showNotification('📈 Monthly Report: 156 resolved, 6.2hr avg time, 4.3/5 satisfaction, 88% efficiency. Trending: Facilities, Transport', 'info', 6000);
+        }
+
+        function showSystemAnalytics() {
+showNotification('📊 System Analytics: 156 users, 23 active sessions, 99.8% uptime, 2.4GB database, 0.3s response time, secure', 'info', 6000);
+        }
+
+        function showSystemSettings() {
+showNotification('🔧 System Settings: 24hr auto-escalation, real-time notifications, daily 2AM backup, 30min timeout, high security', 'info', 6000);
+        }
+
+        function showSecuritySettings() {
+            const securityInfo = `🛡️ Security Settings Overview\n\n🔐 Authentication:\n• Two-Factor Authentication: ✅ Enabled\n• Password Policy: 8+ chars, mixed case, numbers\n• Account Lockout: 5 failed attempts\n• Session Timeout: 30 minutes\n\n🔒 System Security:\n• SSL/TLS: ✅ Enforced\n• CSRF Protection: ✅ Enabled\n• Rate Limiting: ✅ Active\n• Audit Logging: ✅ Comprehensive\n\n📊 Recent Activity:\n• Failed Login Attempts: 0 (last 24h)\n• Security Alerts: 0 active\n\n⚠️ All security settings are managed by IT administrators.`;
+
+            alert(securityInfo);
+showNotification('🛡️ Security settings displayed. All systems are secure and functioning normally.', 'info', 5000);
+        }
+
+        function showBulkUserOptions() {
+            const activeUsers = users.filter(u =>u.status === 'active' &&u.email !== currentUser.email).length;
+            const inactiveUsers = users.filter(u =>u.status === 'inactive').length;
+            const studentCount = users.filter(u =>u.role === 'student').length;
+            const staffCount = users.filter(u =>u.role !== 'student' &&u.email !== currentUser.email).length;
+
+            const choice = confirm(`👥 Bulk User Management Options:\n\n📊 Current Users:\n• Active Users: ${activeUsers}\n• Inactive Users: ${inactiveUsers}\n• Students: ${studentCount}\n• Staff: ${staffCount}\n\nChoose Action:\nOK = Deactivate all inactive users\nCancel = Activate all inactive users\n\n⚠️ This will affect ${inactiveUsers} users!`);
+
+            if (choice) {
+                // Remove all inactive users
+                const beforeCount = users.length;
+                users = users.filter(u =>u.status === 'active');
+                const deletedCount = beforeCount - users.length;
+
+                // Update credentials
+Object.keys(userCredentials).forEach(role => {
+userCredentials[role] = userCredentials[role].filter(cred => {
+                        const user = users.find(u =>u.email === cred.username);
+                        return user &&user.status === 'active';
+                    });
+                });
+
+renderUsers();
+showNotification(`🗑️ Successfully removed ${deletedCount} inactive users!`, 'success');
+            } else {
+                // Activate all inactive users
+                let activatedCount = 0;
+users.forEach(user => {
+                    if (user.status === 'inactive') {
+user.status = 'active';
+activatedCount++;
+
+                        // Re-add to credentials
+                        const roleCredentials = userCredentials[user.role];
+                        if (roleCredentials&& !roleCredentials.find(cred =>cred.username === user.email)) {
+                            const credentialEntry = {
+                                username: user.email,
+                                password: user.password,
+                                name: user.name
+                            };
+
+                            if (user.role === 'student') {
+                                credentialEntry.id = user.studentId;
+credentialEntry.class = user.class;
+                            } else if (user.role === 'hod') {
+credentialEntry.department = user.department;
+                            } else if (user.role === 'principal') {
+credentialEntry.title = 'Principal';
+                            }
+
+roleCredentials.push(credentialEntry);
+                        }
+                    }
+                });
+
+renderUsers();
+showNotification(`✅ Successfully activated ${activatedCount} users!`, 'success');
+            }
+        }
+
+        function resetAllUserPasswords() {
+            const eligibleUsers = users.filter(u =>u.email !== currentUser.email);
+
+            if (eligibleUsers.length === 0) {
+showNotification('ℹ️ No other users found to reset passwords!', 'info');
+                return;
+            }
+
+            const confirmation = prompt(`🔐 Reset ALL User Passwords?\n\n⚠️ This will reset passwords for ${eligibleUsers.length} users:\n• Students: ${eligibleUsers.filter(u =>u.role === 'student').length}\n• HODs: ${eligibleUsers.filter(u =>u.role === 'hod').length}\n• Principals: ${eligibleUsers.filter(u =>u.role === 'principal').length}\n• Other Admins: ${eligibleUsers.filter(u =>u.role === 'admin').length}\n\nNew passwords will be auto-generated.\nUsers will need new credentials to login.\n\nType "RESET ALL" to confirm:`);
+
+            if (confirmation === 'RESET ALL') {
+                let resetCount = 0;
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                const resetLog = [];
+
+eligibleUsers.forEach(user => {
+                    // Generate new password
+                    let newPassword = '';
+                    for (let i = 0; i< 8; i++) {
+newPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+                    }
+
+                    const oldPassword = user.password;
+user.password = newPassword;
+
+                    // Update credentials array
+                    const roleCredentials = userCredentials[user.role];
+                    if (roleCredentials) {
+                        const credIndex = roleCredentials.findIndex(cred =>cred.username === user.email);
+                        if (credIndex !== -1) {
+roleCredentials[credIndex].password = newPassword;
+                        }
+                    }
+
+resetLog.push(`${user.name} (${user.email}): ${newPassword}`);
+resetCount++;
+                });
+
+renderUsers();
+showNotification(`🔐 Successfully reset ${resetCount} user passwords!\n\nCheck console for new credentials.`, 'success', 6000);
+
+                // Log all new passwords to console for admin reference
+console.log('🔐 BULK PASSWORD RESET - NEW CREDENTIALS:');
+                console.log('='.repeat(50));
+resetLog.forEach(log => console.log(log));
+                console.log('='.repeat(50));
+console.log(`Reset performed by: ${currentUser.name} at ${new Date().toISOString()}`);
+
+                // Show summary
+setTimeout(() => {
+alert(`🔐 Password Reset Complete!\n\n✅ Reset ${resetCount} passwords successfully\n\n📋 All new credentials have been logged to the browser console (F12 → Console)\n\n⚠️ Please share new credentials securely with users`);
+                }, 1500);
+
+            } else if (confirmation !== null) {
+showNotification('❌ Password reset cancelled. You must type "RESET ALL" exactly to confirm.', 'error');
+            }
+        }
+
+        function showBulkDeleteOptions() {
+            const pendingCount = issues.filter(i =>i.status !== 'resolved').length;
+            const resolvedCount = issues.filter(i =>i.status === 'resolved').length;
+
+            const choice = confirm(`🗑️ Bulk Delete Options:\n\nPending Issues: ${pendingCount}\nResolved Issues: ${resolvedCount}\n\nClick OK to delete ALL resolved issues\nClick Cancel to delete ALL pending issues\n\n⚠️ This action cannot be undone!`);
+
+            if (choice) {
+                // Delete resolved issues
+                const beforeCount = issues.length;
+                issues = issues.filter(i =>i.status !== 'resolved');
+                const deletedCount = beforeCount - issues.length;
+renderIssues();
+updateStats();
+showNotification(`🗑️ Successfully deleted ${deletedCount} resolved issues!`, 'success');
+            } else {
+                // Delete pending issues
+                const beforeCount = issues.length;
+                issues = issues.filter(i =>i.status === 'resolved');
+                const deletedCount = beforeCount - issues.length;
+renderIssues();
+updateStats();
+showNotification(`🗑️ Successfully deleted ${deletedCount} pending issues!`, 'success');
+            }
+        }
+
+        function closeAllPendingIssues() {
+            const pendingIssues = issues.filter(i =>i.status !== 'resolved');
+
+            if (pendingIssues.length === 0) {
+showNotification('ℹ️ No pending issues to close!', 'info');
+                return;
+            }
+
+            if (confirm(`❌ Are you sure you want to close ALL ${pendingIssues.length} pending issues?\n\nThis will mark them as resolved without further action.\n\n⚠️ This action cannot be undone!`)) {
+                const closedCount = pendingIssues.length;
+
+pendingIssues.forEach(issue => {
+issue.status = 'resolved';
+issue.resolvedAt = new Date();
+issue.closedBy = currentUser.name;
+issue.closedReason = 'Bulk administrative closure';
+                });
+
+renderIssues();
+updateStats();
+showNotification(`❌ Successfully closed ${closedCount} pending issues!`, 'success');
+            }
+        }
+
+        // Support and Password Reset Functions
+        function contactSupport() {
+            const supportInfo = `📞SGI - Technical Support\n\n🏢 Contact Information:\n• Phone: +91-XXXX-XXXX-XX\n• Email: support@alpenstockschool.edu\n• WhatsApp: +91-XXXX-XXXX-XX\n\n🕒 Support Hours:\n• Monday - Friday: 8:00 AM - 6:00 PM\n• Saturday: 9:00 AM - 2:00 PM\n• Sunday: Emergency support only\n\n💡 For immediate assistance:\n• Login issues: Contact your class teacher\n• Technical problems: Email IT support\n• Account recovery: Visit school office\n\n🔒 Please have your Student ID/Employee ID ready when contacting support.`;
+
+            alert(supportInfo);
+showNotification('📞 Support contact information displayed. Please save these details for future reference.', 'info', 5000);
+        }
+
+        function forgotPassword() {
+            if (!selectedRole) {
+showNotification('❌ Please select your role first before requesting password reset.', 'error');
+                return;
+            }
+
+            const email = prompt(`🔐 Password Reset Request\n\nSelected Role: ${selectedRole.toUpperCase()}\n\nPlease enter your registered email address to receive password reset instructions:`);
+
+            if (!email) {
+                return; // User cancelled
+            }
+
+            if (!email.includes('@') || !email.includes('.')) {
+showNotification('❌ Please enter a valid email address.', 'error');
+                return;
+            }
+
+            // Check if email exists in the system
+            const roleCredentials = userCredentials[selectedRole];
+            const userExists = roleCredentials&&roleCredentials.find(cred =>cred.username.toLowerCase() === email.toLowerCase());
+
+            if (userExists) {
+                // Show the actual password for demo purposes
+                const resetInfo = `🔐 Password Reset - Demo Mode\n\n✅ Account Found!\n\nUser: ${userExists.name}\nEmail: ${userExists.username}\nCurrent Password: ${userExists.password}\n\n📧 In a real system, password reset instructions would be sent to your email.\n\n⚠️ For security, please change your password after logging in.`;
+
+                alert(resetInfo);
+showNotification(`✅ Password reset information provided for ${userExists.name}. Please use the displayed password to login.`, 'success', 6000);
+
+                // Auto-fill the login form
+document.getElementById('loginUsername').value = userExists.username;
+document.getElementById('loginPassword').focus();
+
+            } else {
+                // Email not found
+                const notFoundInfo = `❌ Account Not Found\n\nThe email "${email}" is not registered in our system for the ${selectedRole.toUpperCase()} role.\n\n💡 Please check:\n• Email spelling is correct\n• You selected the right role\n• Account exists in the system\n\n📞 Contact support if you need assistance:\n• Email: support@alpenstockschool.edu\n• Phone: +91-XXXX-XXXX-XX`;
+
+                alert(notFoundInfo);
+showNotification('❌ Email address not found in the system. Please verify your email and role selection.', 'error', 5000);
+            }
+        }
+
+
+
+        // Initialize the application
+        function init() {
+            // Set up login form handler
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+e.preventDefault();
+
+                const username = document.getElementById('loginUsername').value.trim();
+                const password = document.getElementById('loginPassword').value.trim();
+
+                if (!username || !password) {
+showNotification('❌ Please enter both username and password.', 'error');
+                    return;
+                }
+
+                // Debug login attempt
+console.log('🔐 Login attempt:', {
+                    username: username,
+                    role: selectedRole,
+totalUsers: users.length,
+usersInRole: users.filter(u =>u.role === selectedRole).length,
+activeUsersInRole: users.filter(u =>u.role === selectedRole&&u.status === 'active').length
+                });
+
+                const user = authenticateUser(username, password);
+
+                if (user) {
+console.log('✅ Authentication successful for:', user.name);
+showLoading();
+setTimeout(() => {
+currentUser = {
+                            ...user,
+                            role: selectedRole
+                        };
+isLoggedIn = true;
+hideLoading();
+showNotification(`✅ Welcome ${user.name}! Login successful.`, 'success');
+showPortal();
+                    }, 1500);
+                } else {
+console.log('❌ Authentication failed for:', username, 'in role:', selectedRole);
+console.log('Available users in this role:', users.filter(u =>u.role === selectedRole).map(u => ({
+                        name: u.name,
+                        email: u.email,
+                        status: u.status
+                    })));
+showNotification('❌ Invalid credentials. Please check your username and password.', 'error');
+document.getElementById('loginPassword').value = '';
+document.getElementById('loginPassword').focus();
+                }
+            });
+
+            // Set up issue form handler
+document.getElementById('issueForm').addEventListener('submit', function(e) {
+e.preventDefault();
+
+                const title = document.getElementById('issueTitle').value.trim();
+                const description = document.getElementById('issueDescription').value.trim();
+                const category = document.getElementById('issueCategory').value;
+                const priority = document.getElementById('issuePriority').value;
+                const authorityType = document.getElementById('authorityType').value;
+                const taggedTo = document.getElementById('taggedTo').value;
+
+                if (!title || !description || !category || !priority || !authorityType || !taggedTo) {
+showNotification('❌ Please fill in all required fields including authority selection.', 'error');
+                    return;
+                }
+
+                // Parse the tagged authority
+                let taggedToInfo = {};
+                if (taggedTo.startsWith('hod-')) {
+                    const hodId = parseInt(taggedTo.replace('hod-', ''));
+                    const hod = users.find(u => u.id === hodId);
+taggedToInfo = {
+                        type: 'hod',
+                        id: hodId,
+                        name: hod ?hod.name : 'Unknown HOD',
+                        department: hod ?hod.department : 'Unknown Department'
+                    };
+                } else if (taggedTo.startsWith('principal-')) {
+                    const principalId = parseInt(taggedTo.replace('principal-', ''));
+                    const principal = users.find(u => u.id === principalId);
+taggedToInfo = {
+                        type: 'principal',
+                        id: principalId,
+                        name: principal ?principal.name : 'Unknown Principal'
+                    };
+                }
+
+                const newIssue = {
+                    id: issues.length + 1,
+                    title: title,
+                    description: description,
+                    category: category,
+                    priority: priority,
+                    status: 'open',
+taggedTo: taggedToInfo.type,
+taggedToSpecific: taggedToInfo,
+createdBy: currentUser.name,
+createdAt: new Date(),
+                    deadline: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                    comments: []
+                };
+
+issues.unshift(newIssue);
+renderIssues();
+updateStats();
+
+document.getElementById('issueForm').reset();
+document.getElementById('specificAuthorityField').style.display = 'none';
+
+                const authorityName = taggedToInfo.name;
+                const authorityTitle = taggedToInfo.type === 'hod' ? `HOD - ${taggedToInfo.department}` : 'Principal';
+
+showNotification(`✅ Issue submitted successfully to ${authorityName} (${authorityTitle})! They have 24 hours to respond.`, 'success', 5000);
+            });
+
+            // Set up user creation form handler
+document.getElementById('createUserForm').addEventListener('submit', function(e) {
+e.preventDefault();
+
+                const name = document.getElementById('newUserName').value.trim();
+                const email = document.getElementById('newUserEmail').value.trim();
+                const role = document.getElementById('newUserRole').value;
+                const password = document.getElementById('newUserPassword').value.trim();
+
+                if (!name || !email || !role || !password) {
+showNotification('❌ Please fill in all required fields.', 'error');
+                    return;
+                }
+
+                // Check if email already exists
+                if (users.find(u =>u.email === email)) {
+showNotification('❌ A user with this email already exists.', 'error');
+                    return;
+                }
+
+                const newUser = {
+                    id: users.length + 1,
+                    name: name,
+                    email: email,
+                    role: role,
+                    password: password,
+createdAt: new Date(),
+                    status: 'active'
+                };
+
+                if (role === 'student') {
+                    const studentId = document.getElementById('newStudentId').value.trim();
+                    const studentClass = document.getElementById('newStudentClass').value;
+
+                    if (!studentId || !studentClass) {
+showNotification('❌ Please fill in Student ID and Class for student accounts.', 'error');
+                        return;
+                    }
+
+                    // Check if student ID already exists
+                    if (users.find(u =>u.studentId === studentId)) {
+showNotification('❌ A student with this ID already exists.', 'error');
+                        return;
+                    }
+
+newUser.studentId = studentId;
+newUser.class = studentClass;
+                } else if (role === 'hod') {
+                    const department = document.getElementById('newUserDepartment').value;
+
+                    if (!department) {
+showNotification('❌ Please select a department for HOD accounts.', 'error');
+                        return;
+                    }
+
+newUser.department = department;
+                }
+
+                // Add user to main users array
+users.push(newUser);
+
+                // Also add to credentials for backward compatibility
+                if (!userCredentials[role]) {
+userCredentials[role] = [];
+                }
+
+                const credentialEntry = {
+                    username: email,
+                    password: password,
+                    name: name
+                };
+
+                if (role === 'student') {
+                    credentialEntry.id = newUser.studentId;
+credentialEntry.class = newUser.class;
+                } else if (role === 'hod') {
+credentialEntry.department = newUser.department;
+                } else if (role === 'principal') {
+credentialEntry.title = 'Principal';
+                } else if (role === 'admin') {
+credentialEntry.title = 'Admin';
+                }
+
+userCredentials[role].push(credentialEntry);
+
+                // Debug log to verify user creation
+console.log('✅ User created successfully:', {
+                    id: newUser.id,
+                    name: newUser.name,
+                    email: newUser.email,
+                    role: newUser.role,
+                    status: newUser.status
+                });
+console.log('📊 Total users now:', users.length);
+console.log('🔑 Credentials added to role:', role, userCredentials[role].length, 'entries');
+
+showNotification(`✅ User account created for ${newUser.name}! Credentials: ${newUser.email} / ${newUser.password}`, 'success', 6000);
+
+                // Show detailed success message
+setTimeout(() => {
+alert(`🎉 User Account Created Successfully!\n\n👤 Name: ${newUser.name}\n📧 Email: ${newUser.email}\n🔑 Password: ${newUser.password}\n👥 Role: ${newUser.role.toUpperCase()}\n📊 Status: ${newUser.status.toUpperCase()}\n\n${newUser.studentId ? `🆔 Student ID: ${newUser.studentId}\n🎓 Class: ${newUser.class}\n\n` : ''}${newUser.department ? `🏢 Department: ${newUser.department}\n\n` : ''}✅ The user can now login with these credentials!\n\n⚠️ Please share these credentials securely with the user.`);
+                }, 1000);
+
+document.getElementById('createUserForm').reset();
+document.getElementById('departmentField').style.display = 'none';
+document.getElementById('studentFields').style.display = 'none';
+
+                if (document.getElementById('usersDashboard').style.display !== 'none') {
+renderUsers();
+                }
+            });
+
+            // Set up role change handler for user creation
+document.getElementById('newUserRole').addEventListener('change', function() {
+                const role = this.value;
+                const departmentField = document.getElementById('departmentField');
+                const studentFields = document.getElementById('studentFields');
+
+                if (role === 'hod') {
+departmentField.style.display = 'block';
+studentFields.style.display = 'none';
+                } else if (role === 'student') {
+departmentField.style.display = 'none';
+studentFields.style.display = 'block';
+                } else {
+departmentField.style.display = 'none';
+studentFields.style.display = 'none';
+                }
+            });
+
+            // Set up user filter handler
+document.getElementById('userFilter').addEventListener('change', renderUsers);
+
+            // Set up sort handler
+document.getElementById('sortBy').addEventListener('change', function() {
+sortIssues(this.value);
+renderIssues();
+            });
+
+            // Start timer updates
+setInterval(() => {
+                if (isLoggedIn) {
+checkAndEscalateIssues();
+renderIssues();
+                }
+            }, 60000);
+        }
+
+        function sortIssues(sortBy) {
+            switch(sortBy) {
+                case 'newest':
+issues.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    break;
+                case 'oldest':
+issues.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                    break;
+                case 'priority':
+                    const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+issues.sort((a, b) =>priorityOrder[b.priority] - priorityOrder[a.priority]);
+                    break;
+                case 'deadline':
+issues.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+                    break;
+            }
+        }
+
+        // Initialize the application
+init();
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'970f1b40507a5a18',t:'MTc1NTQ5NTk0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
